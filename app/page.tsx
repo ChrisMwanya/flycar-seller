@@ -11,24 +11,36 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-[600px] bg-gradient-to-r from-gray-800 to-gray-700">
-        <div className="absolute inset-0">
-          <Image
-            src="/Screen.png"
-            alt="Hero Car"
-            fill
-            className="object-cover opacity-80"
-            priority
-          />
+      <section className="relative h-screen bg-gradient-to-r from-gray-800 to-gray-700">
+        <div className="absolute inset-0 overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover opacity-70"
+          >
+            <source src="/videos/hero-video.mp4" type="video/mp4" />
+            {/* Fallback image si la vidéo ne charge pas */}
+            <Image
+              src="/Screen.png"
+              alt="Hero Car"
+              fill
+              className="object-cover opacity-80"
+              priority
+            />
+          </video>
         </div>
         <div className="relative container mx-auto px-4 h-full flex items-center">
           <div className="max-w-xl text-white">
             <h1 className="text-5xl font-bold mb-4 leading-tight">
               LA MARKETPLACE<br />POUR VOS BESOINS AUTO
             </h1>
-            <button className="bg-accent hover:bg-accent-dark text-white px-8 py-3 rounded font-semibold transition-colors">
-              COMMENCER
-            </button>
+            <a href="/cars">
+              <button className="bg-accent hover:bg-accent-dark text-white px-8 py-3 rounded font-semibold transition-colors">
+                COMMENCER
+              </button>
+            </a>
           </div>
         </div>
 
@@ -101,9 +113,11 @@ export default function Home() {
         </div>
 
         <div className="text-center">
-          <button className="bg-accent hover:bg-accent-dark text-white px-8 py-3 rounded font-semibold transition-colors">
-            PARCOURIR TOUS LES VÉHICULES
-          </button>
+          <a href="/cars">
+            <button className="bg-accent hover:bg-accent-dark text-white px-8 py-3 rounded font-semibold transition-colors">
+              PARCOURIR TOUS LES VÉHICULES
+            </button>
+          </a>
         </div>
       </section>
 
@@ -114,9 +128,11 @@ export default function Home() {
             <p className="text-secondary text-sm font-semibold mb-1">TROUVEZ VOTRE VOITURE PARFAITE PAR</p>
             <h2 className="text-3xl font-bold text-gray-900">CATÉGORIES AUTO</h2>
           </div>
-          <button className="text-secondary font-semibold hover:text-secondary-dark">
-            VOIR TOUT →
-          </button>
+          <a href="/cars">
+            <button className="text-secondary font-semibold hover:text-secondary-dark">
+              VOIR TOUT →
+            </button>
+          </a>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -199,9 +215,11 @@ export default function Home() {
             <h2 className="text-3xl font-bold mb-2">DÉCOUVREZ UNE MARKETPLACE AVEC DES VOITURES ADAPTÉES</h2>
             <p className="text-blue-100">Trouvez votre véhicule parfait aujourd&apos;hui</p>
           </div>
-          <button className="bg-accent text-white px-8 py-3 rounded font-semibold hover:bg-accent-dark transition-colors">
-            COMMENCER
-          </button>
+          <a href="/cars">
+            <button className="bg-accent text-white px-8 py-3 rounded font-semibold hover:bg-accent-dark transition-colors">
+              COMMENCER
+            </button>
+          </a>
         </div>
       </section>
 

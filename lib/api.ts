@@ -11,7 +11,7 @@ const api = axios.create({
 // Intercepteur pour ajouter le token automatiquement
 api.interceptors.request.use(
   (config) => {
-    if (typeof window !== 'undefined') {
+    if (globalThis.window !== undefined) {
       const token = localStorage.getItem('authToken');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -30,9 +30,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token invalide ou expiré
-      if (typeof window !== 'undefined') {
+      if (globalThis.window !== undefined) {
         localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        globalThis.window.location.href = '/login';
       }
     }
     return Promise.reject(error);
@@ -70,12 +70,17 @@ export interface LoginData {
 
 export interface User {
   id: string;
-  fullName: string;
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
-  phone: string;
-  role: 'seller' | 'buyer';
-  emailVerified: boolean;
-  createdAt: string;
+  phone?: string;
+  phoneNumber?: string;
+  address?: string;
+  role?: 'seller' | 'buyer';
+  emailVerified?: boolean;
+  statut?: string;
+  createdAt?: string;
   updatedAt?: string;
 }
 
@@ -83,6 +88,57 @@ export interface Token {
   type: string;
   value: string;
   expiresAt: string;
+}
+
+export interface Car {
+  id: string;
+  title: string;
+  price: number;
+  year: number;
+  mileage: number;
+  category: string;
+  transmission: 'automatic' | 'manual';
+  fuelType: 'essence' | 'diesel' | 'electric' | 'hybrid';
+  location: string;
+  description: string;
+  images: string[];
+  featured?: boolean;
+  specifications: {
+    engine?: string;
+    power?: string;
+    color?: string;
+    doors?: number;
+    seats?: number;
+    features?: string[];
+  };
+  seller: {
+    id: string;
+    name: string;
+    phone?: string;
+    email?: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CarFilters {
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minYear?: number;
+  maxYear?: number;
+  minMileage?: number;
+  maxMileage?: number;
+  transmission?: 'automatic' | 'manual';
+  fuelType?: 'essence' | 'diesel' | 'electric' | 'hybrid';
+  search?: string;
+}
+
+export interface ContactSellerData {
+  carId: string;
+  message: string;
+  phone?: string;
+  preferredContact?: 'email' | 'phone';
 }
 
 // Fonctions d'authentification
@@ -101,11 +157,10 @@ export const authAPI = {
 
   // Connexion
   login: async (data: LoginData) => {
+
+    
     const response = await api.post('/login', data);
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token.value);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-    }
+  
     return response.data;
   },
 
@@ -138,20 +193,55 @@ export const authAPI = {
   },
 };
 
+// Fonctions pour les voitures
+export const carsAPI = {
+  // Récupérer la liste des voitures avec filtres optionnels
+  getCars: async (filters?: CarFilters) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params.append(key, value.toString());
+        }
+      });
+    }
+    const response = await api.get(`/cars?${params.toString()}`);
+    return response.data;
+  },
+
+  // Récupérer les détails d'une voiture
+  getCarById: async (id: string) => {
+    const response = await api.get(`/cars/${id}`);
+    return response.data;
+  },
+
+  // Contacter le vendeur
+  contactSeller: async (data: ContactSellerData) => {
+    const response = await api.post('/contact-seller', data);
+    return response.data;
+  },
+
+  // Récupérer les voitures similaires
+  getSimilarCars: async (carId: string, limit: number = 4) => {
+    const response = await api.get(`/cars/${carId}/similar?limit=${limit}`);
+    return response.data;
+  },
+};
+
 // Helpers
 export const isAuthenticated = (): boolean => {
-  if (typeof window === 'undefined') return false;
+  if (globalThis.window === undefined) return false;
   return !!localStorage.getItem('authToken');
 };
 
 export const getUser = (): User | null => {
-  if (typeof window === 'undefined') return null;
+  if (globalThis.window === undefined) return null;
   const userStr = localStorage.getItem('user');
   return userStr ? JSON.parse(userStr) : null;
 };
 
 export const clearAuth = () => {
-  if (typeof window !== 'undefined') {
+  if (globalThis.window !== undefined) {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
   }
